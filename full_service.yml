@@ -1,0 +1,44 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-service
+  namespace: default
+  labels:
+    app: my-app
+  annotations:
+    description: "A detailed Service specification"
+spec:
+  type: LoadBalancer # Options: ClusterIP, NodePort, LoadBalancer, ExternalName
+  externalName: "example.com" # Only for ExternalName type
+  selector:
+    app: my-app
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 8080
+    nodePort: 30001 # Required for NodePort or LoadBalancer type
+  - name: https
+    protocol: TCP
+    port: 443
+    targetPort: 8443
+    nodePort: 30002 # Required for NodePort or LoadBalancer type
+  clusterIP: None # Set to 'None' for a headless service
+  externalIPs:
+  - 192.168.1.10
+  - 192.168.1.11
+  loadBalancerIP: 192.168.1.100
+  loadBalancerSourceRanges:
+  - 192.168.1.0/24
+  - 10.0.0.0/8
+  sessionAffinity: ClientIP # Options: None, ClientIP
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800 # 3 hours
+  ipFamilies:
+  - IPv4
+  - IPv6
+  ipFamilyPolicy: PreferDualStack # Options: SingleStack, PreferDualStack, RequireDualStack
+  internalTrafficPolicy: Local # Options: Cluster, Local
+  externalTrafficPolicy: Local # For LoadBalancer and NodePort services
+  healthCheckNodePort: 30003 # For LoadBalancer type
